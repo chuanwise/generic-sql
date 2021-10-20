@@ -10,6 +10,7 @@ import cn.chuanwise.util.StringUtil;
 
 import java.sql.*;
 import java.util.Map;
+import java.util.Optional;
 
 public class SqlServerCommander
         extends AbstractCommander {
@@ -49,22 +50,34 @@ public class SqlServerCommander
         return new SelectStatement(this) {
             @Override
             public PreparedStatement prepare0() throws SQLException {
-                ConditionUtil.notNull(from, "target table");
-                ConditionUtil.checkArgument(StringUtil.notEmpty(format), "format is empty!");
+                ConditionUtil.checkState(!tableNames.isEmpty(), "target table");
+                ConditionUtil.checkState(StringUtil.notEmpty(format), "format is empty!");
 
-                final StringBuffer stringBuffer = new StringBuffer();
-                stringBuffer.append("select " + format + " from " + formatter().toTableName(from) + " ");
+                final StringBuffer stringBuffer = new StringBuffer(
+                        "select " + format + " from " + CollectionUtil.toString(tableNames.values(),
+                                name -> formatter().toColumnName(name.getTableName()) +
+                                        Optional.ofNullable(name.getAlias()).map(alias -> " as " + alias).orElse(""))
+                );
 
                 if (StringUtil.notEmpty(where)) {
-                    stringBuffer.append("where " + where);
+                    stringBuffer.append(" where " + where);
                 }
 
                 if (StringUtil.notEmpty(orderBy)) {
                     if (desc) {
-                        stringBuffer.append("order by " + orderBy + " desc ");
+                        stringBuffer.append(" order by " + orderBy + " desc");
                     } else {
-                        stringBuffer.append("order by " + orderBy + " ");
+                        stringBuffer.append(" order by " + orderBy);
                     }
+                }
+
+                // join
+                for (JoinSubStatement subStatement : joinSubStatements) {
+                    final TableName tableName = subStatement.getTableName();
+                    stringBuffer.append(" " + subStatement.getJoinType() + " " +
+                            tableName.getTableName() +
+                            Optional.ofNullable(tableName.getAlias()).map(alias -> " as " + alias).orElse("") + " " +
+                            "on " + subStatement.getFilter());
                 }
 
                 final Connection connection = connectionHandler.getConnection();
