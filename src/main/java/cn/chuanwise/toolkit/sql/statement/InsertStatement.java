@@ -12,7 +12,6 @@ import java.util.*;
  * insert into [tableName](column1, column2... columnm) values(value1, value2... valuem)
  */
 public abstract class InsertStatement extends NoResultStatement {
-    @Getter
     protected String tableName;
 
     protected Map<String, Object> fieldValues =  new HashMap<>();

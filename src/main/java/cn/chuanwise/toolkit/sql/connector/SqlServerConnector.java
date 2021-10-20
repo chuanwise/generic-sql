@@ -23,15 +23,6 @@ public class SqlServerConnector
     String address;
     int port;
 
-    /*
-    "jdbc:sqlserver://yourserver.database.windows.net:1433;"
-                        + "database=AdventureWorks;"
-                        + "user=yourusername@yourserver;"
-                        + "password=yourpassword;"
-                        + "encrypt=true;"
-                        + "trustServerCertificate=false;"
-                        + "loginTimeout=30;";
-     */
     Properties properties = new Properties();
 
     public SqlServerConnector() {
@@ -45,6 +36,15 @@ public class SqlServerConnector
         final StringBuffer arguments = new StringBuffer();
         properties.forEach((key, value) -> arguments.append(key + "=" + value + "; "));
 
+        /*
+        "jdbc:sqlserver://yourserver.database.windows.net:1433;"
+                        + "database=AdventureWorks;"
+                        + "user=yourusername@yourserver;"
+                        + "password=yourpassword;"
+                        + "encrypt=true;"
+                        + "trustServerCertificate=false;"
+                        + "loginTimeout=30;";
+        */
         return "//" + address + ":" + port + "; "
                 + arguments;
     }

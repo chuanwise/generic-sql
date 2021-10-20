@@ -31,5 +31,5 @@ public abstract class Statement
         ConditionUtil.isNull(preparedStatement, "statement already prepared!");
     }
 
-    public abstract PreparedStatement prepare0() throws SQLException;
+    protected abstract PreparedStatement prepare0() throws SQLException;
 }

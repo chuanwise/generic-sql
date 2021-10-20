@@ -4,6 +4,7 @@ import cn.chuanwise.annotation.NotRecommended;
 import cn.chuanwise.toolkit.sql.ConnectionHandler;
 import cn.chuanwise.toolkit.sql.statement.InsertStatement;
 import cn.chuanwise.toolkit.sql.statement.SelectStatement;
+import cn.chuanwise.toolkit.sql.statement.UpdateStatement;
 
 public interface Commander {
     @NotRecommended
@@ -15,7 +16,7 @@ public interface Commander {
 
     InsertStatement insert();
 
-    String toTableName(String tableName);
+    UpdateStatement update();
 
-    String toColumnName(String tableName);
+    Formatter formatter();
 }
